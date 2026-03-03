@@ -1,5 +1,6 @@
 import { state } from './state.js';
 import { updateGlobalStats, renderSidebar } from './ui-renderer.js';
+import { historyManager } from './history-manager.js';
 
 const fileNameDisplay = document.getElementById('file-name-display');
 const textContainer = document.getElementById('text-container');
@@ -21,6 +22,7 @@ export function loadFromLocal() {
             fileNameDisplay.textContent = projectData.fileName || "Proyecto Recuperado";
             state.originalTextContent = projectData.originalText || ""; textContainer.innerHTML = projectData.currentHtml || "";
             state.cardsData = projectData.cards || []; state.colorIndex = projectData.colorIndex || 0; renderSidebar();
+            historyManager.pushHistory();
         } catch (e) { console.warn("No se pudo recuperar el autoguardado."); }
     }
 }
@@ -37,12 +39,14 @@ export function loadFileContent(file) {
                 state.originalTextContent = projectData.originalText || ""; textContainer.innerHTML = projectData.currentHtml || "";
                 state.cardsData = projectData.cards || []; state.colorIndex = projectData.colorIndex || 0;
                 renderSidebar(); saveToLocal();
+                historyManager.pushHistory();
             } catch (error) { alert("Archivo corrupto o inválido."); }
         };
     } else {
         reader.onload = function (e) {
             state.originalTextContent = e.target.result; textContainer.textContent = state.originalTextContent;
             state.cardsData = []; cardsList.innerHTML = ''; state.colorIndex = 0; updateGlobalStats(); saveToLocal();
+            historyManager.pushHistory();
         };
     }
     reader.readAsText(file);

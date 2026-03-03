@@ -1,5 +1,6 @@
 import { state, WPM } from './state.js';
 import { saveToLocal } from './storage.js';
+import { historyManager } from './history-manager.js';
 
 const textContainer = document.getElementById('text-container');
 const cardsList = document.getElementById('cards-list');
@@ -45,6 +46,7 @@ export function renderSidebar() {
     });
     updateGlobalStats();
 
+    let cardDebounceTimer;
     document.querySelectorAll('.card-item textarea').forEach(textarea => {
         textarea.addEventListener('input', function (e) {
             const id = parseInt(e.target.getAttribute('data-id'));
@@ -56,6 +58,9 @@ export function renderSidebar() {
                 const markNode = document.getElementById(`mark-${id}`);
                 if (markNode) markNode.innerText = e.target.value;
                 updateGlobalStats(); saveToLocal();
+
+                clearTimeout(cardDebounceTimer);
+                cardDebounceTimer = setTimeout(() => { historyManager.pushHistory(); }, 500);
             }
         });
     });
@@ -66,6 +71,7 @@ export function deleteCard(id) {
     const markNode = document.getElementById(`mark-${id}`);
     if (markNode) { const textNode = document.createTextNode(markNode.innerText); markNode.replaceWith(textNode); }
     renderSidebar(); saveToLocal();
+    historyManager.pushHistory();
 }
 
 export function swapCards(idA, idB) {
@@ -74,4 +80,5 @@ export function swapCards(idA, idB) {
     const markA = document.getElementById(`mark-${idA}`); const markB = document.getElementById(`mark-${idB}`);
     if (markA && markB) { const tempNode = document.createTextNode(''); markA.before(tempNode); markB.before(markA); tempNode.replaceWith(markB); }
     renderSidebar(); saveToLocal();
+    historyManager.pushHistory();
 }

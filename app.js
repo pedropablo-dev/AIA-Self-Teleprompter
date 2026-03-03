@@ -7,6 +7,7 @@ import { state } from './state.js';
 import { loadFromLocal, loadFileContent, saveToLocal } from './storage.js';
 import { renderSidebar, deleteCard, updateGlobalStats } from './ui-renderer.js';
 import { startPrompter, exitPrompter, openJumpMenu, closeJumpMenu, toggleFontSlider, handlePrompterInput, nextCard, prevCard, handleKeydown, updateFontSize } from './prompter-engine.js';
+import { historyManager } from './history-manager.js';
 
 const fileInput = document.getElementById('file-input');
 const fileNameDisplay = document.getElementById('file-name-display');
@@ -48,10 +49,11 @@ document.getElementById('btn-save').addEventListener('click', async () => {
     } catch (error) { }
 });
 
-document.getElementById('btn-undo').addEventListener('click', () => { document.execCommand('undo'); updateGlobalStats(); saveToLocal(); });
-document.getElementById('btn-refresh').addEventListener('click', () => { if (state.originalTextContent) { textContainer.textContent = state.originalTextContent; state.cardsData = []; cardsList.innerHTML = ''; state.colorIndex = 0; updateGlobalStats(); saveToLocal(); } });
-document.getElementById('btn-clear').addEventListener('click', () => { state.originalTextContent = ""; fileInput.value = ""; fileNameDisplay.textContent = "Ningún archivo cargado"; textContainer.textContent = "Arrastra aquí tu archivo .txt o tu proyecto .json para empezar..."; state.cardsData = []; cardsList.innerHTML = ''; state.colorIndex = 0; updateGlobalStats(); localStorage.removeItem('prompterAutosave'); });
+document.getElementById('btn-undo').addEventListener('click', () => { historyManager.undoHistory(); });
+document.getElementById('btn-refresh').addEventListener('click', () => { if (state.originalTextContent) { textContainer.textContent = state.originalTextContent; state.cardsData = []; cardsList.innerHTML = ''; state.colorIndex = 0; updateGlobalStats(); saveToLocal(); historyManager.pushHistory(); } });
+document.getElementById('btn-clear').addEventListener('click', () => { state.originalTextContent = ""; fileInput.value = ""; fileNameDisplay.textContent = "Ningún archivo cargado"; textContainer.textContent = "Arrastra aquí tu archivo .txt o tu proyecto .json para empezar..."; state.cardsData = []; cardsList.innerHTML = ''; state.colorIndex = 0; updateGlobalStats(); localStorage.removeItem('prompterAutosave'); historyManager.pushHistory(); });
 
+let debounceTimer;
 textContainer.addEventListener('input', () => {
     updateGlobalStats();
     const selection = window.getSelection();
@@ -77,6 +79,8 @@ textContainer.addEventListener('input', () => {
         }
     }
     saveToLocal();
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => { historyManager.pushHistory(); }, 500);
 });
 
 textContainer.addEventListener('mouseup', function () {
@@ -104,6 +108,7 @@ textContainer.addEventListener('mouseup', function () {
     state.cardsData = sortedCards;
 
     renderSidebar(); saveToLocal();
+    historyManager.pushHistory();
 });
 
 // Delegación de eventos para la lista de tarjetas
@@ -134,6 +139,14 @@ fontSizeSlider.addEventListener('input', updateFontSize);
 document.getElementById('btn-close-jump').addEventListener('click', closeJumpMenu);
 jumpMenuOverlay.addEventListener('click', (e) => { if (e.target === jumpMenuOverlay) closeJumpMenu(); });
 document.addEventListener('keydown', handleKeydown);
+
+// --- ATAJOS GLOABLES DEL TECLADO ---
+document.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        historyManager.undoHistory();
+    }
+});
 
 
 // --- INICIALIZACIÓN ---
