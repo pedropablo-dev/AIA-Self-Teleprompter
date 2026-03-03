@@ -18,7 +18,8 @@ class HistoryManager {
         const snapshot = {
             html: textContainer.innerHTML,
             cards: cardsSnapshot,
-            colorIndex: state.colorIndex
+            colorIndex: state.colorIndex,
+            textAlignment: state.textAlignment
         };
 
         this.history.push(snapshot);
@@ -47,6 +48,21 @@ class HistoryManager {
 
         state.cardsData = previousState.cards.map(card => ({ ...card }));
         state.colorIndex = previousState.colorIndex;
+        state.textAlignment = previousState.textAlignment || 'center';
+
+        const prompterView = document.getElementById('prompter-view');
+        if (prompterView && prompterView.style.display === 'block') {
+            const prompterText = document.getElementById('prompter-text');
+            const fontSizeSlider = document.getElementById('font-size-slider');
+            if (prompterText && state.cardsData.length > 0) {
+                const currentCard = state.cardsData[state.currentCardIndex] || state.cardsData[0];
+                prompterText.style.textAlign = state.textAlignment;
+                prompterText.innerText = currentCard.text;
+                const sizeToApply = currentCard.localFontSize || state.fontSize;
+                prompterText.style.fontSize = sizeToApply + 'vh';
+                if (fontSizeSlider) fontSizeSlider.value = sizeToApply;
+            }
+        }
 
         renderSidebar();
         saveToLocal();

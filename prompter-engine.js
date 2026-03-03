@@ -30,6 +30,7 @@ export function startPrompter() {
     if (state.cardsData.length === 0) return;
     enterFullscreen();
     setupView.style.display = 'none'; prompterView.style.display = 'block';
+    prompterText.style.textAlign = state.textAlignment || 'center';
     state.currentCardIndex = 0; renderPrompterCard();
 }
 
@@ -81,6 +82,7 @@ export function cycleAlignment(e) {
     state.textAlignment = alignments[(currentIndex + 1) % alignments.length];
     prompterText.style.textAlign = state.textAlignment;
     saveToLocal();
+    import('./history-manager.js').then(module => module.historyManager.pushHistory());
 }
 
 export function openJumpMenu() {
