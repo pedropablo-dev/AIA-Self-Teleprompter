@@ -5,5 +5,6 @@ export const state = {
     draggedCardId: null,
     originalTextContent: "",
     WPM: 130,
-    fontSize: 8
+    fontSize: 8,
+    textAlignment: 'center'
 };

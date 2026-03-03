@@ -6,7 +6,7 @@
 import { state } from './state.js';
 import { loadFromLocal, loadFileContent, saveToLocal } from './storage.js';
 import { renderSidebar, deleteCard, updateGlobalStats } from './ui-renderer.js';
-import { startPrompter, exitPrompter, openJumpMenu, closeJumpMenu, toggleFontSlider, handlePrompterInput, nextCard, prevCard, handleKeydown, updateFontSize } from './prompter-engine.js';
+import { startPrompter, exitPrompter, openJumpMenu, closeJumpMenu, toggleFontSlider, handlePrompterInput, nextCard, prevCard, handleKeydown, updateFontSize, cycleAlignment } from './prompter-engine.js';
 import { historyManager } from './history-manager.js';
 
 const fileInput = document.getElementById('file-input');
@@ -130,12 +130,14 @@ btnStart.addEventListener('click', startPrompter);
 document.getElementById('btn-exit-prompter').addEventListener('click', (e) => { e.stopPropagation(); exitPrompter(); });
 document.getElementById('btn-menu-prompter').addEventListener('click', (e) => { e.stopPropagation(); openJumpMenu(); });
 document.getElementById('btn-font-prompter').addEventListener('click', toggleFontSlider);
+document.getElementById('btn-align-prompter').addEventListener('click', cycleAlignment);
 prompterView.addEventListener('click', () => { fontSliderPanel.style.display = 'none'; });
 fontSliderPanel.addEventListener('click', (e) => e.stopPropagation());
 prompterText.addEventListener('input', handlePrompterInput);
 document.getElementById('zone-right').addEventListener('click', nextCard);
 document.getElementById('zone-left').addEventListener('click', prevCard);
 fontSizeSlider.addEventListener('input', updateFontSize);
+fontSizeSlider.addEventListener('change', () => { historyManager.pushHistory(); });
 document.getElementById('btn-close-jump').addEventListener('click', closeJumpMenu);
 jumpMenuOverlay.addEventListener('click', (e) => { if (e.target === jumpMenuOverlay) closeJumpMenu(); });
 document.addEventListener('keydown', handleKeydown);

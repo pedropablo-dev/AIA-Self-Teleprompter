@@ -30,8 +30,6 @@ export function startPrompter() {
     if (state.cardsData.length === 0) return;
     enterFullscreen();
     setupView.style.display = 'none'; prompterView.style.display = 'block';
-    prompterText.style.fontSize = state.fontSize + 'vh';
-    fontSizeSlider.value = state.fontSize;
     state.currentCardIndex = 0; renderPrompterCard();
 }
 
@@ -42,8 +40,15 @@ export function exitPrompter() {
 
 function renderPrompterCard() {
     if (state.cardsData.length === 0) return;
-    prompterText.innerText = state.cardsData[state.currentCardIndex].text;
+    const currentCard = state.cardsData[state.currentCardIndex];
+    prompterText.innerText = currentCard.text;
     progressIndicator.textContent = `${state.currentCardIndex + 1} / ${state.cardsData.length}`;
+
+    // Apply alignment & per-card font
+    prompterText.style.textAlign = state.textAlignment;
+    const sizeToApply = currentCard.localFontSize || state.fontSize;
+    prompterText.style.fontSize = sizeToApply + 'vh';
+    fontSizeSlider.value = sizeToApply;
 }
 
 export function nextCard() { if (state.currentCardIndex < state.cardsData.length - 1) { state.currentCardIndex++; renderPrompterCard(); } }
@@ -67,6 +72,15 @@ export function handlePrompterInput(e) {
 export function toggleFontSlider(e) {
     e.stopPropagation();
     fontSliderPanel.style.display = fontSliderPanel.style.display === 'flex' ? 'none' : 'flex';
+}
+
+export function cycleAlignment(e) {
+    e.stopPropagation();
+    const alignments = ['center', 'left', 'right', 'justify'];
+    const currentIndex = alignments.indexOf(state.textAlignment);
+    state.textAlignment = alignments[(currentIndex + 1) % alignments.length];
+    prompterText.style.textAlign = state.textAlignment;
+    saveToLocal();
 }
 
 export function openJumpMenu() {
@@ -97,7 +111,12 @@ export function handleKeydown(e) {
 }
 
 export function updateFontSize(e) {
-    state.fontSize = Number(e.target.value);
-    prompterText.style.fontSize = state.fontSize + 'vh';
-    saveToLocal();
+    const newSize = Number(e.target.value);
+    const currentCard = state.cardsData[state.currentCardIndex];
+
+    if (currentCard) {
+        currentCard.localFontSize = newSize;
+        prompterText.style.fontSize = newSize + 'vh';
+        saveToLocal();
+    }
 }

@@ -9,7 +9,7 @@ const autosaveIndicator = document.getElementById('autosave-indicator');
 
 export function saveToLocal() {
     if (!textContainer.innerText.trim() && state.cardsData.length === 0) return;
-    const projectData = { fileName: fileNameDisplay.textContent, originalText: state.originalTextContent, currentHtml: textContainer.innerHTML, cards: state.cardsData, colorIndex: state.colorIndex, WPM: state.WPM, fontSize: state.fontSize };
+    const projectData = { fileName: fileNameDisplay.textContent, originalText: state.originalTextContent, currentHtml: textContainer.innerHTML, cards: state.cardsData, colorIndex: state.colorIndex, WPM: state.WPM, fontSize: state.fontSize, textAlignment: state.textAlignment };
     localStorage.setItem('prompterAutosave', JSON.stringify(projectData));
     autosaveIndicator.style.opacity = '1'; setTimeout(() => { autosaveIndicator.style.opacity = '0'; }, 1500);
 }
@@ -41,6 +41,7 @@ export function loadFileContent(file) {
                 state.originalTextContent = projectData.originalText || ""; textContainer.innerHTML = projectData.currentHtml || "";
                 state.cardsData = projectData.cards || []; state.colorIndex = projectData.colorIndex || 0;
                 state.WPM = projectData.WPM || 130; state.fontSize = projectData.fontSize || 8;
+                state.textAlignment = projectData.textAlignment || 'center';
                 renderSidebar(); saveToLocal();
                 historyManager.pushHistory();
             } catch (error) { alert("Archivo corrupto o inválido."); }
