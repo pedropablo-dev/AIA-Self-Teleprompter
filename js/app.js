@@ -98,6 +98,27 @@ document.getElementById('custom-speaker-select').addEventListener('click', () =>
     document.getElementById('speaker-modal-overlay').style.display = 'flex';
 });
 
+// Selección Masiva
+document.getElementById('btn-speakers-all').addEventListener('click', () => {
+    state.selectedSpeakers = state.presetSpeakers.map(s => s.name);
+    populateSpeakerModal();
+    triggerFullRender();
+});
+
+document.getElementById('btn-speakers-none').addEventListener('click', () => {
+    state.selectedSpeakers = [];
+    populateSpeakerModal();
+    triggerFullRender();
+});
+
+function triggerFullRender() {
+    updateSpeakerLabel(state.selectedSpeakers);
+    if (typeof renderFullScript === 'function') renderFullScript();
+    if (typeof renderSidebar === 'function') renderSidebar();
+    if (typeof renderPrompterText === 'function') renderPrompterText();
+    saveToLocal();
+}
+
 // Cerrar modal: botón X
 document.getElementById('btn-close-speaker-modal').addEventListener('click', () => {
     document.getElementById('speaker-modal-overlay').style.display = 'none';
@@ -118,14 +139,7 @@ document.getElementById('speaker-modal-list').addEventListener('change', (e) => 
     ).map(cb => cb.value);
 
     state.selectedSpeakers = checked;
-    updateSpeakerLabel(checked);
-
-    // Forzar renderizado total (Filtro por hablantes)
-    if (typeof renderFullScript === 'function') renderFullScript();
-    if (typeof renderSidebar === 'function') renderSidebar();
-    if (typeof renderPrompterText === 'function') renderPrompterText();
-
-    saveToLocal();
+    triggerFullRender();
 });
 
 
@@ -558,9 +572,9 @@ document.getElementById('json-upload-input').addEventListener('change', function
             if (importedData.project && importedData.project.metadata_config) {
                 state.presetColors = importedData.project.metadata_config.colors || [];
                 state.presetSpeakers = importedData.project.metadata_config.speakers || [];
-                state.selectedSpeakers = state.presetSpeakers.map(s => s.name);
+                state.selectedSpeakers = []; // EMPEZAR VACÍO (Refinement)
             } else {
-                state.selectedSpeakers = [...new Set(state.scenes.map(s => s.speakerName).filter(Boolean))];
+                state.selectedSpeakers = []; // EMPEZAR VACÍO (Refinement)
             }
 
             // Destruir bloqueo y renderizar

@@ -64,8 +64,14 @@ export function renderSidebar() {
     }
 
     cardsList.innerHTML = '';
+
+    // Filtro robusto: si no hay selección, no mostrar nada
+    if (!state.selectedSpeakers || state.selectedSpeakers.length === 0) {
+        updateGlobalStats();
+        return;
+    }
+
     const filteredCards = state.cardsData.filter(card => {
-        if (!state.selectedSpeakers || state.selectedSpeakers.length === 0) return true;
         return state.selectedSpeakers.some(s => card.metadata && card.metadata.includes(s));
     });
 
@@ -214,8 +220,8 @@ export function renderFullScript() {
     const allScenes = state.scenes || [];
     let newHtml = '';
 
-    if (selectedSpeakers.length === 0 && allScenes.length > 0) {
-        textContainer.innerHTML = '';
+    if (selectedSpeakers.length === 0) {
+        textContainer.innerHTML = '<div style="color:#555; font-style:italic; padding:20px;">Selecciona al menos un hablante para ver el guion...</div>';
         return;
     }
 
