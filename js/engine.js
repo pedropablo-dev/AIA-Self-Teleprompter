@@ -1,6 +1,6 @@
 import { state } from './state.js';
 import { saveToLocal } from './storage.js';
-import { calculateReadingTime, updateGlobalStats } from './ui.js';
+import { calculateReadingTime, updateGlobalStats, renderSidebar } from './ui.js';
 
 const setupView = document.getElementById('setup-view');
 const prompterView = document.getElementById('prompter-view');
@@ -70,8 +70,8 @@ function renderPrompterCard() {
     // Actualizar barra de metadatos superior
     const metaContainer = document.getElementById('prompter-top-metadata');
     if (metaContainer) {
-        const modIcon = currentCard.modified ? '✎ ' : '';
-        metaContainer.innerText = modIcon + (currentCard.metadata || '');
+        const modIcon = currentCard.modified ? '<span style="color: #cc8e5c; margin-right: 5px;">✎</span>' : '';
+        metaContainer.innerHTML = modIcon + (currentCard.metadata || '');
     }
 }
 export function nextCard() { if (state.currentCardIndex < state.cardsData.length - 1) { state.currentCardIndex++; renderPrompterCard(); } }
