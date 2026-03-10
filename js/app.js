@@ -526,6 +526,30 @@ window.addEventListener('beforeunload', (e) => {
     }
 });
 
+// --- NAVEGACIÓN TÁCTICA (MÓVIL/TABLET) ---
+document.addEventListener('click', (e) => {
+    const tabBtn = e.target.closest('.mobile-tab-btn');
+    if (!tabBtn) return;
+
+    // 1. Resetear estados visuales de los botones
+    document.querySelectorAll('.mobile-tab-btn').forEach(btn => btn.classList.remove('active'));
+    tabBtn.classList.add('active');
+
+    // 2. Ocultar todos los paneles
+    document.querySelectorAll('.document-panel, .sidebar-panel').forEach(panel => {
+        panel.classList.remove('active');
+        panel.classList.add('inactive'); // Forzar ocultación en mobile
+    });
+
+    // 3. Mostrar panel objetivo
+    const targetSelector = tabBtn.getAttribute('data-target');
+    const targetPanel = document.querySelector(targetSelector);
+    if (targetPanel) {
+        targetPanel.classList.remove('inactive');
+        targetPanel.classList.add('active');
+    }
+});
+
 // --- INICIALIZACIÓN ---
 loadFromLocal();   // restaura preferencias de usuario (WPM, fontSize, alignment)
 

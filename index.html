@@ -13,87 +13,7 @@
 
     <title>Smart Segment Prompter - Aplica la IA</title>
     <link rel="stylesheet" href="css/prompter.css">
-    <style>
-        /* --- Iteración 7/8: Inyección CSS Dinámica --- */
 
-        /* 1. Layout 50/50 Simétrico y Limitación Global */
-        #setup-view {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr !important;
-            gap: 20px;
-            height: 100vh !important;
-            overflow: hidden !important;
-            box-sizing: border-box;
-        }
-
-        .document-panel,
-        .sidebar-panel {
-            min-width: 400px;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        /* 2. Separación de Renglones (Interlineado) y Scroll Interno Izquierdo */
-        #text-container {
-            flex-grow: 1;
-            height: 0 !important;
-            overflow-y: auto !important;
-            padding-bottom: 60px !important;
-            box-sizing: border-box !important;
-        }
-
-        #text-container .scene-text-block {
-            line-height: 2.2 !important;
-        }
-
-        #text-container mark {
-            line-height: 2.2;
-            padding: 2px 0;
-        }
-
-        /* 3. Barras de Scroll Oscuras Universales */
-        ::-webkit-scrollbar {
-            width: 10px;
-            height: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #121212;
-            border-left: 1px solid #222;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-
-        * {
-            scrollbar-width: thin;
-            scrollbar-color: #333 #121212;
-        }
-
-        /* 4. Separación Panel Derecho / Scroll Interno Derecho */
-        #cards-list {
-            flex: 1 1 auto !important;
-            min-height: 0 !important;
-            overflow-y: auto !important;
-            height: auto !important;
-            padding-right: 18px !important;
-            padding-bottom: 60px !important;
-            box-sizing: border-box !important;
-        }
-
-        /* 5. Identificador Visual de Foco Sutil (Sincronización DOM) */
-        .card-item:focus-within .focus-indicator {
-            opacity: 1 !important;
-        }
-    </style>
 </head>
 
 <body>
@@ -144,7 +64,7 @@
 
         <div class="sidebar-panel">
             <div class="sidebar-header">
-                <h3 style="margin: 0 0 10px 0;">Tarjetas Generadas</h3>
+                <h3 style="margin: 0 0 10px 0;">🏷️ Tarjetas Generadas</h3>
                 <div class="global-stats" id="global-stats-sidebar">Tarjetas: 0</div>
                 <div style="display: flex; gap: 8px; margin-bottom: 10px; margin-top: 10px; align-items: center;">
                     <select id="sidebar-sorter"
@@ -233,6 +153,11 @@
             <p id="sys-dialog-message" style="font-size:0.9rem; color:#aaa; margin:0 0 20px 0; line-height:1.4;"></p>
             <div style="display:flex; gap:12px; justify-content:center;" id="sys-dialog-btns"></div>
         </div>
+    </div>
+
+    <div id="mobile-tabs-nav" style="display: none;">
+        <button class="mobile-tab-btn active" data-target=".document-panel">📝 Guion</button>
+        <button class="mobile-tab-btn" data-target=".sidebar-panel">🏷️ Tarjetas</button>
     </div>
 
     <script type="module" src="./js/app.js"></script>

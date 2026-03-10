@@ -118,7 +118,7 @@ export function renderSidebar() {
             ? 'color: #4caf50; border: 2px solid #4caf50; background: transparent; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; outline: none; padding: 0;'
             : 'color: #555; border: 2px solid #555; background: transparent; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; outline: none; padding: 0;';
 
-        cardDiv.innerHTML = `${metaHtml}<textarea data-id="${card.id}" spellcheck="false" rows="3" style="height: auto; min-height: 3.5rem; overflow: hidden;">${card.text}</textarea>
+        cardDiv.innerHTML = `${metaHtml}<textarea id="card-txt-${card.id}" name="card-txt-${card.id}" data-id="${card.id}" spellcheck="false" rows="3" style="height: auto; min-height: 3.5rem; overflow: hidden;">${card.text}</textarea>
         <div class="card-meta">
             <span>${card.text.length} car. | ~${timeStr}</span>
             <div style="display: flex; gap: 8px; align-items: center;">
