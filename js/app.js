@@ -467,6 +467,8 @@ function applyCurrentSorting() {
         });
     } else if (mode === 'status') {
         state.cardsData.sort((a, b) => (a.completed ? 1 : 0) - (b.completed ? 1 : 0));
+    } else if (mode === 'modified') {
+        state.cardsData.sort((a, b) => (b.modified ? 1 : 0) - (a.modified ? 1 : 0));
     } else if (mode === 'sync') {
         // 1. Extraer el orden lineal exacto del DOM izquierdo
         const marks = Array.from(document.querySelectorAll('#text-container mark.highlight'));

@@ -118,11 +118,17 @@ export function renderSidebar() {
             ? 'color: #4caf50; border: 2px solid #4caf50; background: transparent; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; outline: none; padding: 0;'
             : 'color: #555; border: 2px solid #555; background: transparent; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; outline: none; padding: 0;';
 
+        const modClass = card.modified ? 'btn-mod modified' : 'btn-mod';
+        const modStyle = card.modified
+            ? 'color: #ff9800; border: 2px solid #ff9800; background: transparent; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; outline: none; padding: 0; font-size: 14px;'
+            : 'color: #555; border: 2px solid #555; background: transparent; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; outline: none; padding: 0; font-size: 14px;';
+
         cardDiv.innerHTML = `${metaHtml}<textarea id="card-txt-${card.id}" name="card-txt-${card.id}" data-id="${card.id}" spellcheck="false" rows="3" style="height: auto; min-height: 3.5rem; overflow: hidden;">${card.text}</textarea>
         <div class="card-meta">
             <span>${card.text.length} car. | ~${timeStr}</span>
             <div style="display: flex; gap: 8px; align-items: center;">
                 <button class="${checkClass}" data-id="${card.id}" style="${checkStyle}" title="Marcar como completado">✓</button>
+                <button class="${modClass}" data-id="${card.id}" style="${modStyle}" title="Marcar/Desmarcar como modificado">✎</button>
                 <button class="btn-insert-below" style="background:transparent; border:1px solid #4caf50; color:#4caf50; cursor:pointer; padding:0 10px; border-radius:4px; font-size:0.75rem; height: 28px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; transition: all 0.2s;" title="Añadir tarjeta debajo">↳ Añadir</button>
                 <button class="btn-delete" style="padding:0 10px; height: 28px; font-size:0.75rem; font-weight: normal !important; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;">Eliminar</button>
             </div>
@@ -152,6 +158,15 @@ export function renderSidebar() {
             const cardIndex = state.cardsData.findIndex(c => c.id === id);
             if (cardIndex > -1) {
                 state.cardsData[cardIndex].text = e.target.value;
+                if (!state.cardsData[cardIndex].modified) {
+                    state.cardsData[cardIndex].modified = true;
+                    const modBtn = e.target.nextElementSibling?.querySelector('.btn-mod');
+                    if (modBtn) {
+                        modBtn.className = 'btn-mod modified';
+                        modBtn.style.color = '#ff9800';
+                        modBtn.style.borderColor = '#ff9800';
+                    }
+                }
                 const timeStr = calculateReadingTime(e.target.value) + "s";
                 e.target.nextElementSibling.querySelector('span').textContent = `${e.target.value.length} car. | ~${timeStr}`;
                 const markNode = document.getElementById(`mark-${id}`);
@@ -163,6 +178,20 @@ export function renderSidebar() {
 
                 clearTimeout(cardDebounceTimer);
                 cardDebounceTimer = setTimeout(() => { historyManager.pushHistory(); }, 500);
+            }
+        });
+    });
+
+    // Intercepción de evento para el botón modificado manual
+    document.querySelectorAll('.btn-mod').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation(); e.preventDefault();
+            const id = parseInt(this.getAttribute('data-id'));
+            const card = state.cardsData.find(c => c.id === id);
+            if (card) {
+                card.modified = !card.modified;
+                saveToLocal();
+                renderSidebar();
             }
         });
     });
