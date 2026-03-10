@@ -70,7 +70,8 @@ function renderPrompterCard() {
     // Actualizar barra de metadatos superior
     const metaContainer = document.getElementById('prompter-top-metadata');
     if (metaContainer) {
-        metaContainer.innerText = currentCard.metadata || '';
+        const modIcon = currentCard.modified ? '✎ ' : '';
+        metaContainer.innerText = modIcon + (currentCard.metadata || '');
     }
 }
 export function nextCard() { if (state.currentCardIndex < state.cardsData.length - 1) { state.currentCardIndex++; renderPrompterCard(); } }
@@ -80,15 +81,31 @@ export function handlePrompterInput(e) {
     if (state.cardsData.length === 0) return;
     const newText = e.target.innerText;
     const currentCard = state.cardsData[state.currentCardIndex];
+
+    // Sincronización de estado y flag para ordenación
     currentCard.text = newText;
+    currentCard.modified = true;
+
     const textarea = document.querySelector(`textarea[data-id="${currentCard.id}"]`);
     if (textarea) {
         textarea.value = newText;
-        textarea.nextElementSibling.querySelector('span').textContent = `${newText.length} car. | ~${calculateReadingTime(newText)}s`;
+        // Puntero corregido: las estadísticas están en la cabecera (previousElementSibling)
+        const statsSpan = textarea.previousElementSibling?.querySelector('.card-stats');
+        if (statsSpan) {
+            const timeStr = Math.ceil((newText.trim().split(/\s+/).length / state.WPM) * 60) + "s";
+            statsSpan.textContent = `${newText.length} car. | ~${timeStr}`;
+        }
     }
+
     const markNode = document.getElementById(`mark-${currentCard.id}`);
     if (markNode) markNode.innerText = newText;
-    updateGlobalStats(); saveToLocal();
+
+    // Feedback visual inmediato en el prompter
+    const metaContainer = document.getElementById('prompter-top-metadata');
+    if (metaContainer) metaContainer.innerText = '✎ ' + (currentCard.metadata || '');
+
+    updateGlobalStats();
+    saveToLocal();
 }
 
 export function toggleFontSlider(e) {
