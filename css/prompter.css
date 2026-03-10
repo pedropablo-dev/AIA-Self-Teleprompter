@@ -299,6 +299,8 @@ body {
     background-color: #000000;
     color: #ffffff;
     z-index: 9999;
+    touch-action: pan-y !important;
+    overflow: hidden;
 }
 
 #prompter-text {
@@ -309,17 +311,19 @@ body {
     font-size: 8vh;
     font-weight: 600;
     line-height: 1.3;
-    width: 88%;
-    padding: 0 6%;
-    box-sizing: border-box;
-    height: 80%;
-    max-height: 90vh;
+    width: 90%;
+    max-height: 75vh;
+    /* Evita que choque con metadata o footer */
+    padding: 0;
+    margin: 0;
+    /* Eliminado el margin-top que causaba el desplazamiento */
     outline: none;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     overflow-y: auto;
+    z-index: 10;
 }
 
 .btn-check {
@@ -389,20 +393,14 @@ body {
 }
 
 .zone-btn-top {
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    background: rgba(40, 40, 40, 0.5);
-    border: 1px solid #555;
+    background: rgba(40, 40, 40, 0.8);
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    color: white;
-    font-size: 18px;
-    z-index: 10002;
-    transition: background 0.2s;
+    border: 1px solid #444;
 }
 
 .zone-btn-top:hover {
@@ -434,18 +432,30 @@ body {
     display: none;
     position: absolute;
     top: 75px;
-    right: 5vw;
-    background: rgba(30, 30, 30, 0.95);
+    right: 80px;
+    /* Ajustado para que no tape los botones laterales */
+    width: 220px;
+    /* Ancho fijo para evitar que se estire */
+    height: auto;
+    /* Altura automática */
+    background: rgba(30, 30, 30, 0.98);
     border: 1px solid #444;
-    border-radius: 8px;
-    padding: 15px 20px;
+    border-radius: 12px;
+    padding: 20px;
     z-index: 10005;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    flex-direction: column;
+    /* Diseño vertical más limpio */
     align-items: center;
-    gap: 10px;
+    gap: 15px;
     color: #ccc;
-    font-size: 2vh;
-    font-weight: bold;
+    backdrop-filter: blur(10px);
+}
+
+/* Ajuste del slider dentro del panel para que no se desborde */
+#font-size-slider {
+    width: 100% !important;
+    margin: 0;
 }
 
 input[type="range"] {

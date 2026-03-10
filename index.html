@@ -117,28 +117,43 @@
         </div>
     </div>
 
-    <div id="prompter-view">
+    <div id="prompter-view" style="touch-action: pan-y;">
         <div id="prompter-top-metadata"
-            style="position: absolute; top: 3vh; left: 50%; transform: translateX(-50%); color: #999; font-size: 2vh; font-weight: bold; z-index: 50; pointer-events: none; text-align: center; width: 90%; opacity: 0.85; font-family: sans-serif;">
+            style="position: absolute; top: 3vh; left: 50%; transform: translateX(-50%); color: #999; font-size: 2vh; font-weight: bold; z-index: 50; pointer-events: none; text-align: center; width: 90%; opacity: 0.85;">
         </div>
-        <div class="touch-zone" id="zone-left" title="Atrás (Click)">
-            <div class="zone-btn-top" id="btn-exit-prompter" title="Salir de grabación">✖</div>
-            &lt;
+
+        <div id="btn-exit-prompter" class="zone-btn-top"
+            style="position:absolute; top:20px; left:20px; z-index:100; cursor:pointer;" title="Salir">✖</div>
+
+        <div class="prompter-sidebar-right"
+            style="position:absolute; top:20px; right:20px; display:flex; flex-direction:column; gap:15px; z-index:100;">
+            <div class="zone-btn-top" id="btn-menu-prompter" title="Lista">☰</div>
+            <div class="zone-btn-top" id="btn-font-prompter" title="Zoom">Aa</div>
+            <div class="zone-btn-top" id="btn-align-prompter" title="Alineación">≡</div>
+            <div class="zone-btn-top" id="btn-toggle-completed" title="Completado">✓</div>
         </div>
+
         <div id="prompter-text" contenteditable="true" spellcheck="false"></div>
-        <div id="progress-indicator"></div>
-        <div class="touch-zone" id="zone-right" title="Siguiente (Click)">
-            <div class="zone-btn-top" id="btn-menu-prompter" title="Lista de tarjetas">☰</div>
-            <div class="zone-btn-top" id="btn-font-prompter" title="Tamaño de texto">Aa</div>
-            <div class="zone-btn-top" id="btn-align-prompter" title="Alineación (Centro/Izq/Der/Justificado)">≡</div>
-            <div class="zone-btn-top" id="btn-toggle-completed" title="Marcar como Completado" style="top: 185px;">✓
-            </div>
-            &gt;
+
+        <div id="prompter-nav-footer"
+            style="position: fixed; bottom: 20px; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; box-sizing: border-box; pointer-events: none; z-index: 100;">
+            <div id="zone-left"
+                style="pointer-events: auto; background: rgba(255,255,255,0.1); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #aaa; cursor: pointer; border: 1px solid #444;">
+                &lt;</div>
+            <div id="progress-indicator"
+                style="color: #666; font-weight: bold; font-family: sans-serif; font-size: 1.2rem;">0 / 0</div>
+            <div id="zone-right"
+                style="pointer-events: auto; background: rgba(255,255,255,0.1); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #aaa; cursor: pointer; border: 1px solid #444;">
+                &gt;</div>
         </div>
 
         <div id="font-slider-panel">
-            A- <input type="range" id="font-size-slider" min="4" max="15" step="0.5" value="8"> A+
-            <span id="zoom-value-display" style="margin-left: 10px; min-width: 35px; text-align: right;">8.0</span>
+            <div style="display:flex; justify-content:space-between; width:100%; font-size:14px; margin-bottom:5px;">
+                <span>A-</span>
+                <span id="zoom-value-display">8.0</span>
+                <span>A+</span>
+            </div>
+            <input type="range" id="font-size-slider" min="4" max="15" step="0.5" value="8">
         </div>
     </div>
 

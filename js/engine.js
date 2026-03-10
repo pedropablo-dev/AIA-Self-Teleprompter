@@ -11,6 +11,59 @@ const jumpMenuOverlay = document.getElementById('jump-menu-overlay');
 const jumpListContent = document.getElementById('jump-list-content');
 const fontSizeSlider = document.getElementById('font-size-slider');
 
+// Variables para gestos: Swipe y Pinch-to-Zoom
+let touchStartX = 0;
+let initialPinchDist = 0;
+let initialFontSize = 0;
+const SWIPE_THRESHOLD = 70;
+
+function handleTouchStart(e) {
+    if (e.touches.length === 2) {
+        // Iniciando Pinch-to-Zoom
+        initialPinchDist = Math.hypot(
+            e.touches[0].pageX - e.touches[1].pageX,
+            e.touches[0].pageY - e.touches[1].pageY
+        );
+        const currentCard = state.cardsData[state.currentCardIndex];
+        initialFontSize = currentCard.localFontSize || state.fontSize;
+    } else {
+        // Iniciando Swipe
+        touchStartX = e.changedTouches[0].screenX;
+    }
+}
+
+function handleTouchMove(e) {
+    if (e.touches.length === 2 && initialPinchDist > 0) {
+        e.preventDefault(); // Evitar scroll mientras se hace zoom
+        const currentDist = Math.hypot(
+            e.touches[0].pageX - e.touches[1].pageX,
+            e.touches[0].pageY - e.touches[1].pageY
+        );
+        const zoomFactor = currentDist / initialPinchDist;
+        let newSize = initialFontSize * zoomFactor;
+
+        // Limitar entre 4 y 15 como el slider
+        newSize = Math.max(4, Math.min(15, newSize));
+
+        // Aplicar zoom en tiempo real
+        fontSizeSlider.value = newSize;
+        updateFontSize({ target: fontSizeSlider });
+    }
+}
+
+function handleTouchEnd(e) {
+    if (e.touches.length < 2) initialPinchDist = 0;
+    if (document.activeElement === prompterText) return;
+
+    if (e.changedTouches.length > 0 && initialPinchDist === 0) {
+        const touchEndX = e.changedTouches[0].screenX;
+        const diff = touchEndX - touchStartX;
+        if (Math.abs(diff) > SWIPE_THRESHOLD) {
+            if (diff > 0) prevCard(); else nextCard();
+        }
+    }
+}
+
 function enterFullscreen() {
     const elem = document.documentElement;
     if (elem.requestFullscreen) { elem.requestFullscreen().catch(() => { }); }
@@ -31,6 +84,11 @@ export function startPrompter() {
     enterFullscreen();
     setupView.style.display = 'none'; prompterView.style.display = 'block';
     prompterText.style.textAlign = state.textAlignment || 'center';
+
+    prompterView.addEventListener('touchstart', handleTouchStart, { passive: false });
+    prompterView.addEventListener('touchmove', handleTouchMove, { passive: false });
+    prompterView.addEventListener('touchend', handleTouchEnd, { passive: false });
+
     state.currentCardIndex = 0; renderPrompterCard();
 }
 
