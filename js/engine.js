@@ -36,7 +36,11 @@ export function startPrompter() {
 
 export function exitPrompter() {
     exitFullscreenMode();
-    prompterView.style.display = 'none'; setupView.style.display = 'flex'; fontSliderPanel.style.display = 'none';
+    prompterView.style.display = 'none';
+    setupView.style.display = 'flex';
+    fontSliderPanel.style.display = 'none';
+    // Forzar redibujado de tarjetas para reflejar cambios hechos en el prompter
+    renderSidebar();
 }
 
 function renderPrompterCard() {
@@ -89,7 +93,7 @@ export function handlePrompterInput(e) {
     const textarea = document.querySelector(`textarea[data-id="${currentCard.id}"]`);
     if (textarea) {
         textarea.value = newText;
-        // Puntero corregido: las estadísticas están en la cabecera (previousElementSibling)
+        // Puntero corregido hacia arriba (cabecera .card-stats)
         const statsSpan = textarea.previousElementSibling?.querySelector('.card-stats');
         if (statsSpan) {
             const timeStr = Math.ceil((newText.trim().split(/\s+/).length / state.WPM) * 60) + "s";
@@ -100,11 +104,15 @@ export function handlePrompterInput(e) {
     const markNode = document.getElementById(`mark-${currentCard.id}`);
     if (markNode) markNode.innerText = newText;
 
-    // Feedback visual inmediato en el prompter
+    // Feedback visual inmediato en el prompter (Naranja Apagado)
     const metaContainer = document.getElementById('prompter-top-metadata');
-    if (metaContainer) metaContainer.innerText = '✎ ' + (currentCard.metadata || '');
+    if (metaContainer) {
+        const modIcon = '<span style="color: #cc8e5c; margin-right: 5px;">✎</span>';
+        metaContainer.innerHTML = modIcon + (currentCard.metadata || '');
+    }
 
     updateGlobalStats();
+    renderSidebar();
     saveToLocal();
 }
 
